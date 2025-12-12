@@ -1,20 +1,24 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // 1. Hide Menu Page
-    const path = window.location.pathname;
-    if (path.includes("/p/masterclass")) {
-        const style = document.createElement("style");
-        style.innerHTML = `
-            .menu-block-container,
-            .menu-block-container.is-fixed,
-            .menu-placement-widget {
-                display: none !important;
-            }
-        `;
-        document.head.appendChild(style);
-    }
+(function() {
+    // Kita bungkus semua logic dalam satu fungsi "main"
+    function runMainScript() {
+        console.log("Taplink Custom Script Loaded & Running..."); // Debugging marker
 
-    // 2. Custom Widget Resizer
-    (function() {
+        // --- 1. Logic Hide Menu Page ---
+        const path = window.location.pathname;
+        if (path.includes("/p/masterclass")) {
+            const style = document.createElement("style");
+            style.innerHTML = `
+                .menu-block-container,
+                .menu-block-container.is-fixed,
+                .menu-placement-widget {
+                    display: none !important;
+                }
+            `;
+            // Pastikan head ada, kalau tidak append ke body
+            (document.head || document.body).appendChild(style);
+        }
+
+        // --- 2. Logic Custom Widget Resizer ---
         var WIDGET_IDS = [
             'marketplace-calculator-widget',
             'jastip-calculator-widget'
@@ -35,5 +39,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         });
-    })();
-});
+    }
+
+    // --- FIX TIMING DISINI ---
+    // Cek status dokumen saat script ini sampai
+    if (document.readyState === "loading") {
+        // Jika script sampai DULUAN sebelum website siap, kita tunggu.
+        document.addEventListener("DOMContentLoaded", runMainScript);
+    } else {
+        // Jika script sampai TERLAMBAT (website sudah siap), langsung jalankan!
+        runMainScript();
+    }
+})();
